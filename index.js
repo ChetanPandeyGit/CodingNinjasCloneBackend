@@ -26,6 +26,10 @@ app.use(
   })
 );
 
+app.get("/",  (req, res) => {
+      res.send('This is Backend Server of Coding Ninjas Clone (Chetan Pandey) ')
+});
+
 app.get("/courses", async (req, res) => {
   try {
     const courses = await CourseModel.find();
