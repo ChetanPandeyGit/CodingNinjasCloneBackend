@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }));
-app.options('/login', cors());
+app.options('/login', cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }));
 app.use("/", cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }), route);
 app.use('/', cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }),router)
 
