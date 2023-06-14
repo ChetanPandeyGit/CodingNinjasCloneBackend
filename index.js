@@ -7,7 +7,6 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const secretKey = "@Chetan123";
 const CourseModel = require("./models/courseSchema");
-const Razorpay = require('razorpay');
 const router = require("./routes/router");
 
 
@@ -15,9 +14,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/", cors({ origin: "*" }), route);
+app.use(cors());
+app.use("/",  route);
 app.use('/',router)
-app.use(cors({ origin: "*" }));
 app.options('/login', cors());
 app.use(
   session({
