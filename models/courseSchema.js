@@ -16,6 +16,10 @@ const courseSchema = new mongoose.Schema({
   fees: {
     type: Number,
     required: true,
+  },
+  image: {
+    type: String,
+    required: true,
   }
 });
 

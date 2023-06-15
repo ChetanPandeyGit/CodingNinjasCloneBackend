@@ -7,7 +7,6 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const secretKey = "@Chetan123";
 const CourseModel = require("./models/courseSchema");
-const Razorpay = require('razorpay');
 const router = require("./routes/router");
 
 
@@ -15,14 +14,13 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }));
-//app.options('/login', cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }));
-app.use("/", cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }), route);
-app.use('/', cors({ origin: "https://codingninjasclonefrontend.onrender.com/" }),router)
 
+app.use(cors());
+app.use("/",route);
+app.use('/',router)
 app.use(
   session({
-    secret: "your_session_secret", 
+    secret: "Ses_Sec", 
     resave: false,
     saveUninitialized: true,
   })
@@ -89,6 +87,42 @@ app.post("/logout", (req, res) => {
       res.json({ message: "Logout successful" });
     }
   });
+});
+
+app.post('/user/enroll', async (req, res) => {
+  try {
+    const { userId, courseId } = req.body;
+
+    await User.findByIdAndUpdate(userId, { $addToSet: { courses: courseId } });
+
+    res.json({ message: 'Course enrolled successfully' });
+  } catch (error) {
+    console.error('Failed to enroll course:', error);
+    res.status(500).json({ error: 'Failed to enroll course' });
+  }
+});
+
+app.get('/user/:userId/courses', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+
+    const user = await UserModel.findById(userId).populate('courses');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const courses = user.courses.map((course) => ({
+      id: course._id,
+      name: course.name,
+      description: course.description,
+    }));
+
+    res.json(courses);
+  } catch (error) {
+    console.error('Failed to fetch course listing:', error);
+    res.status(500).json({ error: 'Failed to fetch course listing' });
+  }
 });
 
 app.listen(port, async () => {
