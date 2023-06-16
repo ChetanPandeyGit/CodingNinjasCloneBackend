@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const secretKey = "@Chetan123";
 const CourseModel = require("./models/courseSchema");
 const router = require("./routes/router");
+const FormData = require("./models/formDataSchema");
 
 
 const app = express();
@@ -100,6 +101,26 @@ app.post('/user/enroll', async (req, res) => {
     console.error('Failed to enroll course:', error);
     res.status(500).json({ error: 'Failed to enroll course' });
   }
+});
+
+app.post('/saveFormData', (req, res) => {
+  console.log(req.body);
+  const { user, personalDetails, academicDetails, goals } = req.body;
+
+  const formData = new FormData({
+    user,
+    personalDetails,
+    academicDetails,
+    goals,
+  });
+
+  formData.save()
+    .then((savedData) => {
+      res.json(savedData);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Error saving form data' });
+    });
 });
 
 app.get('/user/:userId/courses', async (req, res) => {
