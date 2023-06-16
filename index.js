@@ -15,10 +15,10 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cors());
-app.use("/",route);
+app.use("/",  route);
 app.use('/',router)
+app.options('/login', cors());
 app.use(
   session({
     secret: "Ses_Sec", 
