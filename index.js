@@ -9,6 +9,7 @@ const secretKey = "@Chetan123";
 const CourseModel = require("./models/courseSchema");
 const router = require("./routes/router");
 const FormData = require("./models/formDataSchema");
+const CBFormDataModel = require("./models/cbFormDataSchema");
 
 
 const app = express();
@@ -90,18 +91,7 @@ app.post("/logout", (req, res) => {
   });
 });
 
-app.post('/user/enroll', async (req, res) => {
-  try {
-    const { userId, courseId } = req.body;
 
-    await User.findByIdAndUpdate(userId, { $addToSet: { courses: courseId } });
-
-    res.json({ message: 'Course enrolled successfully' });
-  } catch (error) {
-    console.error('Failed to enroll course:', error);
-    res.status(500).json({ error: 'Failed to enroll course' });
-  }
-});
 
 app.post('/saveFormData', (req, res) => {
   console.log(req.body);
@@ -123,28 +113,21 @@ app.post('/saveFormData', (req, res) => {
     });
 });
 
-app.get('/user/:userId/courses', async (req, res) => {
-  try {
-    const { userId } = req.params;
-    console.log(userId);
+app.post("/cbSubmitForm", (req, res) => {
+  console.log(req.body);
+  const formData = req.body;
+  const newFormData = new CBFormDataModel(formData);
 
-    const user = await UserModel.findById(userId).populate('courses');
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const courses = user.courses.map((course) => ({
-      id: course._id,
-      name: course.name,
-      description: course.description,
-    }));
-
-    res.json(courses);
-  } catch (error) {
-    console.error('Failed to fetch course listing:', error);
-    res.status(500).json({ error: 'Failed to fetch course listing' });
-  }
+  newFormData.save()
+    .then((savedData) => {
+      res.json(savedData);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Error saving form data' });
+    });
 });
+
+
 
 app.listen(port, async () => {
   try {
